@@ -15,6 +15,7 @@ import math
 import os
 
 TRAIN_PROCESS_DIR = 'train_process'
+EPOCHS = 100
 
 def generator_model():
     model = Sequential()
@@ -93,7 +94,7 @@ def train(BATCH_SIZE):
     d_on_g.compile(loss='binary_crossentropy', optimizer=g_optim)
     d.trainable = True
     d.compile(loss='binary_crossentropy', optimizer=d_optim)
-    for epoch in range(100):
+    for epoch in range(EPOCHS):
         print("Epoch is", epoch)
         print("Number of batches", int(X_train.shape[0]/BATCH_SIZE))
         for index in range(int(X_train.shape[0]/BATCH_SIZE)):
