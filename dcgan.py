@@ -12,7 +12,9 @@ import numpy as np
 from PIL import Image
 import argparse
 import math
+import os
 
+TRAIN_PROCESS_DIR = 'train_process'
 
 def generator_model():
     model = Sequential()
@@ -75,6 +77,8 @@ def combine_images(generated_images):
 
 
 def train(BATCH_SIZE):
+    os.makedirs(TRAIN_PROCESS_DIR, exist_ok=True)
+
     (X_train, y_train), (X_test, y_test) = fashion_mnist.load_data()
     X_train = (X_train.astype(np.float32) - 127.5)/127.5
     X_train = X_train[:, :, :, None]
@@ -99,8 +103,9 @@ def train(BATCH_SIZE):
             if index % 20 == 0:
                 image = combine_images(generated_images)
                 image = image*127.5+127.5
+                file_name = "%d_%d.png" % (epoch, index)
                 Image.fromarray(image.astype(np.uint8)).save(
-                    str(epoch)+"_"+str(index)+".png")
+                        os.path.join(TRAIN_PROCESS_DIR, file_name))
             X = np.concatenate((image_batch, generated_images))
             y = [1] * BATCH_SIZE + [0] * BATCH_SIZE
             d_loss = d.train_on_batch(X, y)
